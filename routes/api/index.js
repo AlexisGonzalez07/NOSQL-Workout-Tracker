@@ -20,16 +20,50 @@ const Workout = require("../../models/workout.js");
 //     }
 //   });
 // });
-
 router.get("/workouts", (req, res) => {
-  Workout.find({})
-    .then((data) => {
-      res.json(data);
+  Workout.aggregate(
+    [{
+    $addFields: {
+    totalDuration: {$sum:"$exercises.duration"}
+    }
+    }])
+    .sort({ date: -1 })
+    .then(dbWorkout => {
+      res.json(dbWorkout);
     })
-    .catch((err) => {
-      res.json(err);
+    .catch(err => {
+      res.status(400).json(err);
     });
 });
+
+router.get("/workouts/range", (req, res) => {
+  Workout.aggregate(
+    [{
+    $addFields: {
+    totalDuration: {$sum:"$exercises.duration"}
+    }
+    }])
+    .sort({ date: -1 })
+    .limit(7)
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.status(400).json(err);
+    });
+});
+
+
+// router.get("/workouts", (req, res) => {
+//   Workout.find({})
+//     .then((data) => {
+//       // data.aggregate()
+//       res.json(data);
+//     })
+//     .catch((err) => {
+//       res.json(err);
+//     });
+// });
 
 router.put("/workouts/:id", (req, res) => {
   let newExercise = req.body
@@ -61,73 +95,5 @@ router.post("/workouts", (req, res) => {
       res.json(err);
     });
 });
-
-// app.get("/find/:id", (req, res) => {
-// Workout.findOne(
-//     {
-//       _id: mongojs.ObjectId(req.params.id)
-//     },
-//     (error, data) => {
-//       if (error) {
-//         res.send(error);
-//       } else {
-//         res.send(data);
-//       }
-//     }
-//   );
-//   (error, data) => {
-//       if (error) {
-//         res.send(error);
-//       } else {
-//         res.send(data);
-//       }
-// });
-
-// app.post("/update/:id", (req, res) => {
-//   Workout.update(
-//     {
-//       _id: mongojs.ObjectId(req.params.id)
-//     },
-//     {
-//       $set: {
-//         title: req.body.title,
-//         note: req.body.note,
-//         modified: Date.now()
-//       }
-//     },
-//     (error, data) => {
-//       if (error) {
-//         res.send(error);
-//       } else {
-//         res.send(data);
-//       }
-//     }
-//   );
-// });
-
-// app.delete("/delete/:id", (req, res) => {
-// Workout.remove(
-//     {
-//       _id: mongojs.ObjectID(req.params.id)
-//     },
-//     (error, data) => {
-//       if (error) {
-//         res.send(error);
-//       } else {
-//         res.send(data);
-//       }
-//     }
-//   );
-// });
-
-// app.delete("/clearall", (req, res) => {
-//   Workout.remove({}, (error, response) => {
-//     if (error) {
-//       res.send(error);
-//     } else {
-//       res.send(response);
-//     }
-//   });
-// });
 
 module.exports = router;
