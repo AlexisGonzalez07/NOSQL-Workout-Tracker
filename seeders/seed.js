@@ -3,8 +3,15 @@ const db = require('../models/index');
 
 // const {Workout} = require('./models/workout.js')
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { useNewUrlParser: true });
-
+mongoose.connect(
+  process.env.MONGODB_URI || 'mongodb://localhost/workout',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  },
+);
 const workoutSeed = [
   {
     day: new Date(new Date().setDate(new Date().getDate() - 9)),
