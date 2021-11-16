@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const db = require('../models/index');
-
+require('dotenv').config()
 // const {Workout} = require('./models/workout.js')
 
 mongoose.connect(
